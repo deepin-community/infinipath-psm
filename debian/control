@@ -1,0 +1,56 @@
+Source: infinipath-psm
+Section: libs
+Priority: optional
+Maintainer: Debian HPC Team <debian-hpc@lists.debian.org>
+Uploaders: Roland Fehrenbacher <rf@q-leap.de>,
+           Mehdi Dogguy <mehdi@debian.org>
+Build-Depends: debhelper (>= 9),
+               dpkg-dev (>= 1.13.19),
+               uuid-dev
+Standards-Version: 4.1.3
+Homepage: https://github.com/intel/psm
+Vcs-Git: https://salsa.debian.org/hpc-team/infinipath-psm
+Vcs-Browser: https://salsa.debian.org/hpc-team/infinipath-psm
+
+Package: libpsm-infinipath1
+Architecture: amd64 i386
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Description: PSM Messaging library for Intel Truescale adapters
+ The PSM Messaging API, or PSM API, is Intel's (formerly QLogic's) low-level,
+ user-level communication interface for the Truescale family of products. PSM
+ users can use mechanisms necessary to implement higher-level communication
+ interfaces in parallel environments.
+ .
+ This package contains the shared libraries.
+
+Package: libpsm-infinipath1-dev
+Section: libdevel
+Architecture: amd64 i386
+Depends: libpsm-infinipath1 (= ${binary:Version}),
+         ${misc:Depends}
+Conflicts: libion-dev
+Description: Development files for libpsm-infinipath1
+ The PSM Messaging API, or PSM API, is Intel's (formerly QLogic's) low-level,
+ user-level communication interface for the Truescale family of products. PSM
+ users can use mechanisms necessary to implement higher-level communication
+ interfaces in parallel environments.
+ .
+ This package is needed to compile programs against libpsm-infinipath1.
+ It contains the header files and links needed for compiling.
+
+Package: libpsm-infinipath1-dbg
+Section: debug
+Priority: optional
+Architecture: amd64 i386
+Depends: libpsm-infinipath1 (= ${binary:Version}),
+         ${misc:Depends}
+Description: Debugging symbols for libpsm-infinipath1
+ The PSM Messaging API, or PSM API, is Intel's (formerly QLogic's) low-level,
+ user-level communication interface for the Truescale family of products. PSM
+ users can use mechanisms necessary to implement higher-level communication
+ interfaces in parallel environments.
+ .
+ This package contains the debugging symbols associated with
+ libpsm-infinipath1. They will automatically be used by gdb for debugging
+ libpsm-infinipath1-related issues.

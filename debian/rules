@@ -1,0 +1,61 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/buildflags.mk
+include /usr/share/dpkg/pkg-info.mk
+include /usr/share/dpkg/architecture.mk
+
+export DEB_CFLAGS_MAINT_APPEND = -fcommon
+
+ifeq ($(DEB_HOST_ARCH),amd64)
+  ARCH := x86_64
+else
+  ARCH := $(DEB_HOST_ARCH)
+endif
+
+PSM_LIB_MAJOR := $(shell printf "%d" `sed -n 's/^\#define.*PSM_VERNO_MAJOR.*0x0\?\([1-9a-f]\?[0-9a-f]\+\).*/\1/p' $(CURDIR)/psm.h`)
+PSM_LIB_MINOR := $(shell printf "%d" `sed -n 's/^\#define.*PSM_VERNO_MINOR.*\(0x[0-9a-f]\+\).*/\1/p' $(CURDIR)/psm.h`)
+PSM_LIB_VERSION := ${PSM_LIB_MAJOR}.${PSM_LIB_MINOR}
+
+
+MAKE_OPTIONS := INSTALL_PREFIX=/usr libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+  PSM_HAVE_SCIF=0 USE_PSM_UUID=0 arch=$(ARCH)
+
+%:
+	dh $@ --parallel
+
+debian/%.postinst: debian/%.postinst.in
+	sed 	-e 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' 	\
+		-e 's/@PSM_LIB_VERSION@/${PSM_LIB_VERSION}/g'		\
+		-e 's/@PSM_LIB_MAJOR@/${PSM_LIB_MAJOR}/g'		\
+		$< > $@
+
+debian/%.prerm: debian/%.prerm.in
+	sed	-e 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g'	\
+		-e 's/@PSM_LIB_VERSION@/${PSM_LIB_VERSION}/g'		\
+		-e 's/@PSM_LIB_MAJOR@/${PSM_LIB_MAJOR}/g'		\
+		$< > $@
+
+debian/%.postrm: debian/%.postrm.in
+	sed	-e 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g'	\
+		-e 's/@PSM_LIB_VERSION@/${PSM_LIB_VERSION}/g'		\
+		-e 's/@PSM_LIB_MAJOR@/${PSM_LIB_MAJOR}/g'		\
+		$< > $@
+
+override_dh_auto_build: debian/libpsm-infinipath1.postinst debian/libpsm-infinipath1.prerm debian/libpsm-infinipath1.postrm
+	$(MAKE) $(MAKE_OPTIONS)
+
+override_dh_strip:
+	dh_strip --dbg-package=libpsm-infinipath1-dbg
+
+override_dh_auto_install:
+	$(MAKE) install $(MAKE_OPTIONS) DESTDIR=$$PWD/debian/tmp
+	mkdir debian/tmp/usr/lib/libpsm1/
+	mv debian/tmp/usr/lib/*/libpsm_infinipath.so.${PSM_LIB_VERSION}  debian/tmp/usr/lib/libpsm1/
+
+override_dh_auto_test:
+
+override_dh_auto_clean:
+	$(MAKE) $(MAKE_OPTIONS) distclean
+	-rm -f include/linux-i386/linux-i386 include/linux-ppc/linux-ppc
+	-[ ! -f debian/libpsm-infinipath1.postinst ] || rm debian/libpsm-infinipath1.postinst
+	-[ ! -f debian/libpsm-infinipath1.prerm ] || rm debian/libpsm-infinipath1.prerm

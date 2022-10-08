@@ -1,0 +1,31 @@
+From: Roland Fehrenbacher <rf@q-leap.de>
+Date: Fri, 29 Dec 2017 12:19:43 +0100
+Subject: Include <sys/sysmacros.h> to avoid warning about minor
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+ipath_proto.c: In function ‘ipath_userinit’:
+ipath_proto.c:539:13: error: In the GNU C Library, "minor" is defined
+ by <sys/sysmacros.h>. For historical compatibility, it is
+ currently defined by <sys/types.h> as well, but we plan to
+ remove this soon. To use "minor", include <sys/sysmacros.h>
+ directly. If you did not intend to use a system-defined macro
+ "minor", you should undefine it after including <sys/types.h>. [-Werror]
+     spctrl->spc_dev.spd_type = minor(st.st_rdev);
+---
+ ipath/ipath_proto.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ipath/ipath_proto.c b/ipath/ipath_proto.c
+index 5f9365f..a943c1d 100644
+--- a/ipath/ipath_proto.c
++++ b/ipath/ipath_proto.c
+@@ -37,6 +37,7 @@
+ // level infinipath protocol code.
+ 
+ #include <sys/poll.h>
++#include <sys/sysmacros.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <stdint.h>

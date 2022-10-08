@@ -1,0 +1,45 @@
+From: Roland Fehrenbacher <rf@q-leap.de>
+Date: Thu, 28 Dec 2017 19:56:31 +0100
+Subject: Fix truncation warnings with gcc7
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+This patch was originally created by
+Johannes Brandstätter <jbrandst@2ds.eu> see
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=853451
+---
+ psm_ep.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/psm_ep.c b/psm_ep.c
+index 6857895..2bd0ed4 100644
+--- a/psm_ep.c
++++ b/psm_ep.c
+@@ -978,7 +978,7 @@ __psm_ep_open(psm_uuid_t const unique_job_key, struct psm_ep_open_opts const *op
+     int i, num_rails = 0;
+     char *uname = "IPATH_UNIT";
+     char *pname = "IPATH_PORT";
+-    char uvalue[4], pvalue[4];
++    char uvalue[4], pvalue[6];
+     int devid_enabled[PTL_MAX_INIT];
+     union psmi_envvar_val devs;
+ 
+@@ -1010,7 +1010,7 @@ __psm_ep_open(psm_uuid_t const unique_job_key, struct psm_ep_open_opts const *op
+ 	/* If multi-rail is used, set the first ep unit/port */
+ 	if (num_rails > 0) {
+ 	    snprintf(uvalue, 4, "%1d", units[0]);
+-	    snprintf(pvalue, 4, "%1d", ports[0]);
++	    snprintf(pvalue, 6, "%1d", ports[0]);
+ 	    setenv(uname, uvalue, 1);
+ 	    setenv(pname, pvalue, 1);
+ 	}
+@@ -1038,7 +1038,7 @@ __psm_ep_open(psm_uuid_t const unique_job_key, struct psm_ep_open_opts const *op
+     if (psmi_device_is_enabled(devid_enabled, PTL_DEVID_IPS)) {
+ 	for (i = 1; i < num_rails; i++) {
+ 	    snprintf(uvalue, 4, "%1d", units[i]);
+-	    snprintf(pvalue, 4, "%1d", ports[i]);
++	    snprintf(pvalue, 6, "%1d", ports[i]);
+ 	    setenv(uname, uvalue, 1);
+ 	    setenv(pname, pvalue, 1);
+ 

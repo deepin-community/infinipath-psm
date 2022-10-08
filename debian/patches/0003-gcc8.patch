@@ -1,0 +1,29 @@
+Author: Reiner Herrmann <reiner@reiner-h.de>
+Description: Fix build with gcc 8
+ - psm_utils.c: reserve enough memory for both input strings and the fixed part
+ - psm_ep.c: e has sufficient space to copy including the NULL terminator,
+             which fixes a warning about truncation of the input string
+Bug-Debian: https://bugs.debian.org/897774
+
+--- a/psm_ep.c
++++ b/psm_ep.c
+@@ -1349,7 +1349,7 @@
+ 
+     b_new = (char *) devstr;
+     e = b_new + len;
+-    strncpy(e, devstring, len-1);
++    strncpy(e, devstring, len);
+     e[len-1] = '\0';
+     ee = e + len;
+     i = 0;
+--- a/psm_utils.c
++++ b/psm_utils.c
+@@ -955,7 +955,7 @@
+ 	union psmi_envvar_val env_fi;
+ 	char fvals_str[128];
+ 	char fname[128];
+-	char fdesc[256];
++	char fdesc[300];
+ 
+ 	snprintf(fvals_str, sizeof fvals_str - 1, "%d:%d:1", num, denom);
+ 	fvals_str[sizeof fvals_str - 1] = '\0';

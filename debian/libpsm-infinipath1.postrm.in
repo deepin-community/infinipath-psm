@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" != "remove" ] || [ "$1" != "disappear" ]
+then
+    update-alternatives --remove libpsm_infinipath.so.@PSM_LIB_MAJOR@ \
+    /usr/lib/libpsm1/libpsm_infinipath.so.@PSM_LIB_VERSION@
+fi
+
+#DEBHELPER#
+
+exit 0

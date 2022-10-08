@@ -1,0 +1,10 @@
+#! /bin/sh
+
+set -e
+
+update-alternatives --install /usr/lib/@DEB_HOST_MULTIARCH@/libpsm_infinipath.so.@PSM_LIB_MAJOR@ libpsm_infinipath.so.@PSM_LIB_MAJOR@ \
+    /usr/lib/libpsm1/libpsm_infinipath.so.@PSM_LIB_VERSION@ 40
+
+#DEBHELPER#
+
+exit 0

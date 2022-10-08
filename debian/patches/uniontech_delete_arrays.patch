@@ -1,0 +1,13 @@
+Index: infinipath-psm/include/linux-i386/sysdep.h
+===================================================================
+--- infinipath-psm.orig/include/linux-i386/sysdep.h
++++ infinipath-psm/include/linux-i386/sysdep.h
+@@ -104,7 +104,7 @@ static __inline__ uint32_t ips_cmpxchg(v
+ 				       uint32_t old, uint32_t new)
+ {
+     uint32_t prev;
+-    struct xchg_dummy { uint32_t a[100]; };
++    struct xchg_dummy { uint32_t a; };
+ 
+     asm volatile(LOCK_PREFIX "cmpxchgl %1,%2"
+ 		 : "=a"(prev)
