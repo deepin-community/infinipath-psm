@@ -1,3 +1,9 @@
+infinipath-psm (3.3+20.604758e7-6.3deepin1) unstable; urgency=medium
+
+  * Fix build error
+
+ -- xiangzelong <xiangzelong@deepin.org>  Fri, 21 Jun 2024 17:12:22 +0800
+
 infinipath-psm (3.3+20.604758e7-6.3) unstable; urgency=medium
 
   * Non-maintainer upload.

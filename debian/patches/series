@@ -2,4 +2,6 @@
 0002-Include-sys-sysmacros.h-to-avoid-warning-about-minor.patch
 0003-gcc8.patch
 0004-gcc-11-warning.patch
+0005-rename-strlcat-to-ips_proto_strlcat.patch
+0007-uniontech_delete_arrays.patch
 use-the-build-date-from-source_date_epoc.patch
