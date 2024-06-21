@@ -1,0 +1,129 @@
+From 0e6d0c892f9e0541b92a6c30c63e1d7247083ed0 Mon Sep 17 00:00:00 2001
+From: xzl <xiangzelong@deepin.org>
+Date: Fri, 21 Jun 2024 17:09:55 +0800
+Subject: [PATCH 1/1] rename strlcat to ips_proto_strlcat
+
+---
+ ptl_ips/ips_proto_dump.c | 47 ++++++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 24 deletions(-)
+
+diff --git a/ptl_ips/ips_proto_dump.c b/ptl_ips/ips_proto_dump.c
+index 3cbfa28..0ceff51 100644
+--- a/ptl_ips/ips_proto_dump.c
++++ b/ptl_ips/ips_proto_dump.c
+@@ -139,7 +139,7 @@ void ips_proto_show_header(struct ips_message_header *p_hdr, char *msg)
+ // linux doesn't have strlcat; this is a stripped down implementation
+ // not super-efficient, but we use it rarely, and only for short strings
+ // not fully standards conforming!
+-static size_t strlcat(char *d, const char *s, size_t l)
++static size_t ips_proto_strlcat(char *d, const char *s, size_t l)
+ {
+     int dlen = strlen(d), slen, max;
+     if(l<=dlen)  // bug
+@@ -159,27 +159,27 @@ void ips_proto_get_rhf_errstring(uint32_t err, char *msg, size_t len)
+     *msg = '\0'; // if no errors, and so don't need to check what's first
+ 
+     if(err & INFINIPATH_RHF_H_ICRCERR)
+-        strlcat(msg, "icrcerr ", len);
++        ips_proto_strlcat(msg, "icrcerr ", len);
+     if(err & INFINIPATH_RHF_H_VCRCERR)
+-        strlcat(msg, "vcrcerr ", len);
++        ips_proto_strlcat(msg, "vcrcerr ", len);
+     if(err & INFINIPATH_RHF_H_PARITYERR)
+-        strlcat(msg, "parityerr ", len);
++        ips_proto_strlcat(msg, "parityerr ", len);
+     if(err & INFINIPATH_RHF_H_LENERR)
+-        strlcat(msg, "lenerr ", len);
++        ips_proto_strlcat(msg, "lenerr ", len);
+     if(err & INFINIPATH_RHF_H_MTUERR)
+-        strlcat(msg, "mtuerr ", len);
++        ips_proto_strlcat(msg, "mtuerr ", len);
+     if(err & INFINIPATH_RHF_H_IHDRERR)
+-        strlcat(msg, "ipathhdrerr ", len);
++        ips_proto_strlcat(msg, "ipathhdrerr ", len);
+     if(err & INFINIPATH_RHF_H_TIDERR)
+-        strlcat(msg, "tiderr ", len);
++        ips_proto_strlcat(msg, "tiderr ", len);
+     if(err & INFINIPATH_RHF_H_MKERR)
+-        strlcat(msg, "mkerr ", len);
++        ips_proto_strlcat(msg, "mkerr ", len);
+     if(err & INFINIPATH_RHF_H_IBERR)
+-        strlcat(msg, "iberr ", len);
++        ips_proto_strlcat(msg, "iberr ", len);
+     if(err & INFINIPATH_RHF_L_SWA)
+-        strlcat(msg, "swA ", len);
++        ips_proto_strlcat(msg, "swA ", len);
+     if(err & INFINIPATH_RHF_L_SWB)
+-        strlcat(msg, "swB ", len);
++        ips_proto_strlcat(msg, "swB ", len);
+ }
+ 
+ void ips_proto_dump_err_stats(struct ips_proto *proto)
+@@ -207,53 +207,52 @@ void ips_proto_dump_err_stats(struct ips_proto *proto)
+ 
+     if (proto->error_stats.num_icrc_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "ICRC: %"PRIu64" ", proto->error_stats.num_icrc_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_vcrc_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "VCRC: %"PRIu64" ", proto->error_stats.num_vcrc_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_ecc_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "ECC: %"PRIu64" ", proto->error_stats.num_ecc_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_len_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "LEN: %"PRIu64" ", proto->error_stats.num_len_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_mtu_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "MTU: %"PRIu64" ", proto->error_stats.num_mtu_err);
+-    strlcat(err_stat_msg, tmp_buf, len);
++    ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_khdr_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "KHDR: %"PRIu64" ", proto->error_stats.num_khdr_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_tid_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "TID: %"PRIu64" ", proto->error_stats.num_tid_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_mk_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "MKERR: %"PRIu64" ", proto->error_stats.num_mk_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+     
+     if (proto->error_stats.num_ib_err) {
+       snprintf(tmp_buf, sizeof(tmp_buf), "IBERR: %"PRIu64" ", proto->error_stats.num_ib_err);
+-      strlcat(err_stat_msg, tmp_buf, len);
++      ips_proto_strlcat(err_stat_msg, tmp_buf, len);
+     }
+-    strlcat(err_stat_msg, "\n", len);
++    ips_proto_strlcat(err_stat_msg, "\n", len);
+   }
+   else 
+-    strlcat(err_stat_msg, "No previous errors.\n", len);
++    ips_proto_strlcat(err_stat_msg, "No previous errors.\n", len);
+   
+   _IPATH_ERROR("%s", err_stat_msg);
+ }
+-
+-- 
+2.43.4
+

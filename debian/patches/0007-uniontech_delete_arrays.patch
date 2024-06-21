@@ -1,0 +1,25 @@
+From fe5ac7f925aa4911a50c7942bf94de964ddc6534 Mon Sep 17 00:00:00 2001
+From: xzl <xiangzelong@deepin.org>
+Date: Mon, 24 Jun 2024 16:34:04 +0800
+Subject: [PATCH 1/1] uniontech_delete_arrays
+
+---
+ include/linux-i386/sysdep.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux-i386/sysdep.h b/include/linux-i386/sysdep.h
+index 55ce91e..c3c4e15 100644
+--- a/include/linux-i386/sysdep.h
++++ b/include/linux-i386/sysdep.h
+@@ -104,7 +104,7 @@ static __inline__ uint32_t ips_cmpxchg(volatile uint32_t *ptr,
+ 				       uint32_t old, uint32_t new)
+ {
+     uint32_t prev;
+-    struct xchg_dummy { uint32_t a[100]; };
++    struct xchg_dummy { uint32_t a; };
+ 
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+-- 
+2.43.4
+
