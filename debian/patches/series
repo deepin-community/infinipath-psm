@@ -1,4 +1,5 @@
 0001-Fix-truncation-warnings-with-gcc7.patch
 0002-Include-sys-sysmacros.h-to-avoid-warning-about-minor.patch
 0003-gcc8.patch
-uniontech_delete_arrays.patch
+0004-gcc-11-warning.patch
+use-the-build-date-from-source_date_epoc.patch
