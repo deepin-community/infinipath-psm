@@ -1,0 +1,22 @@
+Description: Disable warning in the cmpxchgl wrapper
+Author: Christoph Biedl <debian.axhn@manchmal.in-ulm.de> 
+Origin: no # upstream is dead
+Bug-Debian: https://bugs.debian.org/984057
+Last-Update: 2022-10-16
+
+--- a/include/linux-i386/sysdep.h
++++ b/include/linux-i386/sysdep.h
+@@ -106,10 +106,13 @@
+     uint32_t prev;
+     struct xchg_dummy { uint32_t a[100]; };
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Warray-bounds"
+     asm volatile(LOCK_PREFIX "cmpxchgl %1,%2"
+ 		 : "=a"(prev)
+ 		 : "q"(new), "m"(*(struct xchg_dummy *)ptr), "0"(old)
+ 		 : "memory");
++#pragma GCC diagnostic pop
+ 
+     return prev;
+ }

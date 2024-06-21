@@ -1,0 +1,53 @@
+From: Vagrant Cascadian <vagrant@reproducible-builds.org>
+Date: Fri, 9 Jul 2021 15:13:24 +0000
+X-Dgit-Generated: 3.3+20.604758e7-6.3 b8d331f9a8fd602863fd5b749cd0f26411889da4
+Subject: Use the build date from SOURCE_DATE_EPOCH if set, falling back to
+
+current time. (Closes: #990862)
+
+https://reproducible-builds.org/docs/source-date-epoch/
+
+---
+
+diff --git a/Makefile b/Makefile
+index d79c4bd..64d6f6b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -270,7 +270,7 @@ ${TARGLIB}.so.${MAJOR}: ${TARGLIB}.so.${MAJOR}.${MINOR}
+ # file around.  Generate it such that the ident command can find it
+ # and strings -a | grep InfiniPath does a reasonable job as well.
+ ${TARGLIB}.so.${MAJOR}.${MINOR}: ${${TARGLIB}-objs}
+-	date +'char psmi_infinipath_revision[] ="$$""Date: %F %R ${rpm_extra_description}InfiniPath $$";' > ${lib_build_dir}/_revision.c
++	printf 'char psmi_infinipath_revision[] ="$$""Date: %s ${rpm_extra_description} InfiniPath $$";\n' "$(BUILD_DATE)" > ${lib_build_dir}/_revision.c
+ 	$(CC) -c $(BASECFLAGS) $(INCLUDES) _revision.c -o _revision.o
+ 	$(CC) $(LDFLAGS) -o $@ -Wl,-soname=${TARGLIB}.so.${MAJOR} -shared -Wl,--unique='*fastpath*' \
+ 		${${TARGLIB}-objs} _revision.o -L$(build_dir)/ipath $(LDLIBS)
+diff --git a/buildflags.mak b/buildflags.mak
+index 34fdf1c..be40c40 100644
+--- a/buildflags.mak
++++ b/buildflags.mak
+@@ -96,3 +96,11 @@ endif
+ CFLAGS += $(BASECFLAGS) $(if $(filter $(CC),gcc),-Wno-strict-aliasing) \
+ 	$(if $(PSM_VALGRIND:0=),-DPSM_VALGRIND,-DNVALGRIND)
+ 
++# Use SOURCE_DATE_EPOCH for build date, falling back to current time
++# https://reproducible-builds.org/docs/source-date-epoch/
++DATE_FMT="+'%F %R'"
++ifdef SOURCE_DATE_EPOCH
++    BUILD_DATE ?= $(shell date -u -d "@$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u -r "$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u "$(DATE_FMT)")
++else
++    BUILD_DATE ?= $(shell date "$(DATE_FMT)")
++endif
+diff --git a/ipath/Makefile b/ipath/Makefile
+index 8c2cc6e..e627b3d 100644
+--- a/ipath/Makefile
++++ b/ipath/Makefile
+@@ -70,7 +70,7 @@ ${TARGLIB}.so.${MAJOR}: ${TARGLIB}.so.${MAJOR}.${MINOR}
+ # file around.  Generate it such that the ident command can find it
+ # and strings -a | grep InfiniPath does a reasonable job as well.
+ ${TARGLIB}.so.${MAJOR}.${MINOR}: ${${TARGLIB}-objs}
+-	date +'static __attribute__ ((unused)) char __psc_infinipath_revision[] ="$$""Date: %F %R ${rpm_extra_description}InfiniPath $$";' > _revision.c
++	printf 'static __attribute__ ((unused)) char __psc_infinipath_revision[] ="$$""Date: %s ${rpm_extra_description}InfiniPath $$";\n' "$(BUILD_DATE)" > _revision.c
+ 	$(CC) -c $(BASECFLAGS) $(INCLUDES) _revision.c -o _revision.o
+ 	$(CC) -o $@ -Wl,-soname=${TARGLIB}.so.${MAJOR} -shared \
+ 		-Wl,--unique='*fastpath*' \
